@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Build LuCI Package
         id: build
-        uses: ./.github/actions/build-luci-app@v1
+        uses: ./.github/actions/build-luci-app
         with:
           package: luci-app-adguardhome
           sdk-url: https://archive.openwrt.org/releases/21.02.0/targets/x86/64/openwrt-sdk-21.02.0-x86-64_gcc-8.4.0_musl.Linux-x86_64.tar.xz
