@@ -47,8 +47,8 @@ runs:
         mkdir -p /tmp/SDK
         curl -SLk --connect-timeout 30 --retry 2 \
           "${{ inputs['sdk-url'] }}" \
-          -o /tmp/SDK.tar.bz2
-        tar xjf /tmp/SDK.tar.bz2 \
+          -o /tmp/SDK.tar.xz
+        tar xJf /tmp/SDK.tar.xz \
             --strip-components=1 -C /tmp/SDK
 
     - name: Download Snapshot OpenWrt SDK
@@ -97,7 +97,7 @@ runs:
       run: |
         mkdir -p artifacts
         # Copy IPK from legacy SDK
-        cp /tmp/SDK/bin/ar71xx/packages/base/luci-*_all.ipk "./artifacts/"
+        cp /tmp/SDK/bin/x86_64/packages/base/luci-*_all.ipk "./artifacts/"
 
         # Copy APK from SNAPSHOT SDK
         cp /tmp/SNAPSDK/bin/packages/x86_64/base/luci-*.apk "./artifacts/"
