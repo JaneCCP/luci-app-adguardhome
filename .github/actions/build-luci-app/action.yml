@@ -79,7 +79,7 @@ runs:
         ./scripts/feeds update -a
         ./scripts/feeds install ${{ inputs.package }}
         echo "CONFIG_PACKAGE_${{ inputs.package }}=y" > .config
-        make defconfig
+        make defconfig FORCE=1
         make package/${{ inputs.package }}/compile V=99 FORCE=1
 
     - name: Compile APK with Snapshot SDK
@@ -89,7 +89,7 @@ runs:
         ./scripts/feeds update -a
         ./scripts/feeds install ${{ inputs.package }}
         echo "CONFIG_PACKAGE_${{ inputs.package }}=y" > .config
-        make defconfig
+        make defconfig FORCE=1
         make package/${{ inputs.package }}/compile V=99 FORCE=1
 
     - name: Collect artifacts
