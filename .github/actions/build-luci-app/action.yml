@@ -90,7 +90,7 @@ runs:
         ./scripts/feeds install ${{ inputs.package }}
         echo "CONFIG_PACKAGE_${{ inputs.package }}=y" > .config
         make defconfig
-        make package/${{ inputs.package }}/compile V=99
+        make package/${{ inputs.package }}/compile V=99 FORCE=1
 
     - name: Collect artifacts
       shell: bash
