@@ -1,0 +1,126 @@
+# 提交就可以直接用的配置模板文件
+# A template config can be used directly after submission
+
+# 用户名: root / 密码: password
+# User: root / Password: password
+
+clients:
+  persistent: []
+  runtime_sources:
+    arp: true
+    dhcp: true
+    hosts: true
+    rdns: false
+    whois: true
+dns:
+  allowed_clients: []
+  bind_hosts:
+    - 0.0.0.0
+  blocked_hosts: []
+  bootstrap_dns:
+    - 1.1.1.1
+    - 223.5.5.5
+  cache_enabled: true
+  cache_optimistic_answer_ttl: 30s
+  cache_optimistic_max_age: 12h
+  cache_size: 4194304
+  disallowed_clients: []
+  edns_client_subnet:
+    custom_ip: ""
+    enabled: false
+    use_custom: false
+  ipset_file: ""
+  port: 5553
+  ratelimit: 0
+  ratelimit_whitelist: []
+  refuse_any: false
+  upstream_dns:
+    - 1.1.1.1
+    - 223.5.5.5
+  upstream_mode: load_balance
+filtering:
+  blocked_response_ttl: 10
+  blocked_services:
+    ids: []
+    schedule:
+      time_zone: Local
+  blocking_mode: nxdomain
+  filtering_enabled: true
+  filters_update_interval: 24
+  parental_block_host: ""
+  parental_cache_size: 1048576
+  parental_enabled: false
+  protection_enabled: true
+  rewrites: []
+  safe_fs_patterns:
+    - /usr/bin/AdGuardHome/data/userfilters/*
+  safe_search:
+    bing: true
+    duckduckgo: true
+    enabled: false
+    google: true
+    pixabay: true
+    yandex: true
+    youtube: true
+  safebrowsing_block_host: ""
+  safebrowsing_cache_size: 1048576
+  safebrowsing_enabled: false
+  safesearch_cache_size: 1048576
+filters:
+  - enabled: true
+    id: 1
+    name: AdGuard DNS filter
+    url: https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt
+  - enabled: true
+    id: 2
+    name: AdAway Default Blocklist
+    url: https://adaway.org/hosts.txt
+  - enabled: false
+    id: 1575618240
+    name: neoHosts full
+    url: https://cdn.jsdelivr.net/gh/neoFelhz/neohosts@gh-pages/full/hosts.txt
+  - enabled: false
+    id: 1575618241
+    name: neoHosts basic
+    url: https://cdn.jsdelivr.net/gh/neoFelhz/neohosts@gh-pages/basic/hosts.txt
+  - enabled: false
+    id: 1575618242
+    name: StevenBlack host basic
+    url: http://sbc.io/hosts/hosts
+  - enabled: false
+    id: 1575618243
+    name: StevenBlack host + fakenews + gambling + porn + social
+    url: http://sbc.io/hosts/alternates/fakenews-gambling-porn-social/hosts
+  - enabled: false
+    id: 1741278925
+    name: 217heidai AdBlock DNS Filters
+    url: https://cdn.jsdelivr.net/gh/217heidai/adblockfilters@main/rules/adblockdns.txt
+http:
+  address: 0.0.0.0:3000
+  pprof:
+    enabled: false
+    port: 6060
+  session_ttl: 720h
+language: ""
+log:
+  file: ""
+  verbose: false
+os:
+  group: ""
+  rlimit_nofile: 0
+  user: ""
+querylog:
+  enabled: false
+  file_enabled: true
+  ignored: []
+  interval: 24h
+  size_memory: 1000
+schema_version: 32
+statistics:
+  enabled: true
+  ignored: []
+  interval: 24h
+user_rules: []
+users:
+  - name: root
+    password: $2y$10$PVhuB.icsC0Jl5Q.8twXwOOVPX0oxdmmilkkkjCXkIBki0rvBatMa

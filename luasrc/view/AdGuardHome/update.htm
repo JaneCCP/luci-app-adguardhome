@@ -1,0 +1,96 @@
+<%+cbi/valueheader%>
+<%local fs=require"nixio.fs"%>
+<%local sys=require"luci.sys"%>
+<input type="button" class="cbi-button cbi-button-apply" id="apply_update_button" value="<%:Update core version%>" onclick="apply_update()"/>
+<input type="button" class="cbi-button cbi-button-reset" id="apply_forceupdate_button" value="<%:Force update%>" onclick="apply_forceupdate()" style="display:none"/>
+<% if self.showfastconfig then %>
+<input type="button" class="cbi-button cbi-button-apply" id="to_configpage" value="<%:Fast config%>" onclick="location.href='<%=url([[admin]], [[services]], [[AdGuardHome]], [[manual]])%>'"/>
+<%end%>
+<div id="logview" style="display:none">
+<input type="checkbox" id="reversetag" value="reverse" onclick="reverselog()" style="vertical-align:middle;height: auto;"><%:Reverse%></input>
+<textarea id="cbid.logview.1.conf" class="cbi-input-textarea" style="width: 100%;display:block;" data-update="change" rows="5" cols="60" readonly="readonly"></textarea>
+</div>
+<script type="text/javascript">//<![CDATA[
+var updatebtn = document.getElementById('apply_update_button');
+var forceupdatebtn = document.getElementById('apply_forceupdate_button');
+const updatelog = document.getElementById('cbid.logview.1.conf');
+var islogreverse = false;
+var isPolling = false;
+var logPos = 0;
+function apply_forceupdate(){
+	updatebtn.disabled = true;
+	logPos = 0;
+	updatelog.innerHTML = "";
+	XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[doupdate]])%>',{ force: 1 },function(x, data){
+		poll_check();
+	});
+}
+function reverselog(){
+	updatelog.innerHTML=updatelog.innerHTML.split('\n').reverse().join('\n');
+	islogreverse = !islogreverse;
+}
+function apply_update(){
+	updatebtn.disabled = true;
+	updatebtn.value    = '<%:Updating...%>';
+	forceupdatebtn.style.display="inline";
+	logPos = 0;
+	updatelog.innerHTML = "";
+	XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[doupdate]])%>',null,function(x, data){
+		poll_check();
+	});
+}
+function poll_check(){
+	if (isPolling) return;
+	isPolling = true;
+	var tag = document.getElementById('logview');
+	tag.style.display="block";
+
+	(function do_poll() {
+		if (!isPolling) return;
+
+		XHR.get('<%=url([[admin]], [[services]], [[AdGuardHome]], [[check]])%>' + '?pos=' + encodeURIComponent(logPos), null,
+			function(x, data) {
+				if (!data) return;
+				var response = data.content || "";
+				if (response.length > 0) {
+					if (islogreverse){
+						updatelog.innerHTML = response.split('\n').reverse().join('\n') + updatelog.innerHTML;
+					} else {
+						updatelog.innerHTML += response;
+					}
+				}
+
+				if (data.pos !== undefined && data.pos !== null) {
+					logPos = parseInt(data.pos, 10) || logPos;
+				}
+
+				if (data.status && data.status !== 'running') {
+					isPolling = false;
+					if (data.status === 'succeeded') {
+						updatebtn.disabled = true;
+						updatebtn.value    = '<%:Updated%>';
+					} else if (data.status === 'failed') {
+						updatebtn.disabled = false;
+						updatebtn.value    = '<%:Update core version%>';
+					}
+					return;
+				}
+
+				if (isPolling) {
+					setTimeout(do_poll, 3000);
+				}
+			}
+		);
+	})();
+}
+<% if sys.call("pgrep -f /usr/share/AdGuardHome/update_core.sh >/dev/null") == 0 then %>
+	updatebtn.disabled = true;
+	updatebtn.value    = '<%:Updating...%>';
+	forceupdatebtn.style.display="inline"
+	poll_check();
+<%elseif fs.access("/var/run/AdG_update_error") then %>
+	poll_check();
+<%end%>
+//]]>
+</script>
+<%+cbi/valuefooter%>

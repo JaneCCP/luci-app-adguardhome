@@ -1,0 +1,42 @@
+<%+cbi/valueheader%>
+	<input data-update="change"<%=
+		attr("id", cbid) ..
+		attr("name", cbid) ..
+		attr("type", "text") ..
+		attr("class", "cbi-input-text") ..
+		attr("value", self:cfgvalue(section) or self.default) ..
+		ifattr(self.size, "size") ..
+		ifattr(self.placeholder, "placeholder") ..
+		ifattr(self.readonly, "readonly") ..
+		ifattr(self.maxlength, "maxlength") ..
+		ifattr(self.datatype, "data-type", self.datatype) ..
+		ifattr(self.datatype, "data-optional", self.optional or self.rmempty) ..
+		ifattr(self.combobox_manual, "data-manual", self.combobox_manual) ..
+		ifattr(#self.keylist > 0, "data-choices", { self.keylist, self.vallist })
+	%> />
+	<input type="button" class="cbi-button cbi-button-apply" id="cbid.AdGuardHome.AdGuardHome.applychpass" value="<%:Loading...%>"/>
+<script type="text/javascript" src="<%=resource%>/bcrypt.min.js"></script>
+<script type="text/javascript">//<![CDATA[
+	const applychpass = document.getElementById('cbid.AdGuardHome.AdGuardHome.applychpass');
+	const hashpass = document.getElementById('cbid.AdGuardHome.AdGuardHome.hashpass');
+	applychpass.value = '<%:Calculate%>';
+	applychpass.addEventListener('click', function() {
+		applychpass.disabled = true;
+		if (hashpass.value != "") {
+			if (bcrypt.truncates(hashpass.value)) {
+				alert('<%:The password is too long%>');
+				return;
+			}
+			hashpass.value = bcrypt.hashSync(hashpass.value, 10);
+			applychpass.value = '<%:Please save/apply%>';
+		} else {
+			applychpass.value = '<%:Is empty%>';
+		}
+	});
+	hashpass.addEventListener('input', function() {
+		applychpass.value = '<%:Calculate%>';
+		applychpass.disabled = false;
+	});
+//]]>
+</script>
+<%+cbi/valuefooter%>

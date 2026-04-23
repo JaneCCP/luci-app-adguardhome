@@ -1,0 +1,30 @@
+name: Compile AdGuardHome LuCI App
+
+on:
+  push:
+    branches:
+      - dev
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build LuCI Package
+        id: build
+        uses: stevenjoezhang/build-luci-app@v1
+        with:
+          package: luci-app-adguardhome
+          sdk-url: https://archive.openwrt.org/releases/21.02.0/targets/x86/64/openwrt-sdk-21.02.0-x86-64_gcc-8.4.0_musl.Linux-x86_64.tar.xz
+          snapsdk-url: https://downloads.openwrt.org/snapshots/targets/x86/64/openwrt-sdk-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./artifacts/*
+          name: Release v${{ steps.build.outputs.version }}
+          tag_name: ${{ github.ref_name }}
