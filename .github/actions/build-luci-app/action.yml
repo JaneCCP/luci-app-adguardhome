@@ -5,7 +5,7 @@ inputs:
     description: "LuCI package directory name (e.g. luci-app-tailscale)"
     required: true
   sdk-url:
-    description: "Legacy OpenWrt SDK .tar.bz2 URL"
+    description: "Legacy OpenWrt SDK .tar.xz URL"
     required: true
   snapsdk-url:
     description: "Snapshot OpenWrt SDK .tar.zst URL"
@@ -36,8 +36,11 @@ runs:
       shell: bash
       run: |
         sudo apt-get update
+        sudo apt install software-properties-common
+        sudo add-apt-repository ppa:deadsnakes/ppa
+        sudo apt-get update
         sudo DEBIAN_FRONTEND=noninteractive \
-          apt-get install -y curl git tar zstd python3-pip
+          apt-get install -y curl git tar zstd python3-pip python3.9 python3.9-distutils
         pip3 install --upgrade pip
         pip3 install po2lmo
 
@@ -47,8 +50,8 @@ runs:
         mkdir -p /tmp/SDK
         curl -SLk --connect-timeout 30 --retry 2 \
           "${{ inputs['sdk-url'] }}" \
-          -o /tmp/SDK.tar.bz2
-        tar xjf /tmp/SDK.tar.bz2 \
+          -o /tmp/SDK.tar.xz
+        tar xf /tmp/SDK.tar.xz \
             --strip-components=1 -C /tmp/SDK
 
     - name: Download Snapshot OpenWrt SDK
@@ -97,7 +100,7 @@ runs:
       run: |
         mkdir -p artifacts
         # Copy IPK from legacy SDK
-        cp /tmp/SDK/bin/ar71xx/packages/base/luci-*_all.ipk "./artifacts/"
+        cp /tmp/SDK/bin/packages/x86_64/base/luci-*_all.ipk "./artifacts/"
 
         # Copy APK from SNAPSHOT SDK
         cp /tmp/SNAPSDK/bin/packages/x86_64/base/luci-*.apk "./artifacts/"
